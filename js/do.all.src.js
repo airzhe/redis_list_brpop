@@ -404,3 +404,5 @@ if (extConfig) {
 }
 
 })(window, document);
+
+Do.add('common', {path: 'js/common.js', type: 'js'});

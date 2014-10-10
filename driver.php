@@ -51,22 +51,14 @@
         </tr>
     </table> 
 	<script>
-           //replaceCode
-           function replaceCode( obj, code){
-                $.each( obj, function( name, value){
-                console.log(name,value);
-                code = code.replace( new RegExp( "{" + name + "}", "gi"), value);
-                });
-                return code;
-           }
-           Do(function(){
+          Do('common',function(){
                 function get_driver_id(){
-                    $.get('order_list.php',function(ret){
+                    $.get('ajax/order_list.php',function(ret){
                         if(ret.ret_code == 200){
                             if(ret.result){
                                  var user_id = ret.user_id,
                                      order_id = ret.order_id,
-                                    _tr = '<tr>\
+                                    _tr = '<tr data-orderid={order_id}>\
                                           <td><span class="text-success">新订单</span><span class="text-info hide">已接单</span></td>\
                                           <td>{order_id}</td>\
                                           <td>{start_position}</td>\
@@ -85,12 +77,19 @@
                 get_driver_id();
                 //接单
                 $('table').on('click','tr button',function(){
-                    var tr = $(this).parents('tr');
-                    tr.find('td').first().find('.text-success').hide().next('span').removeClass('hide');                    
-                    $(this).hide().next('span').removeClass('hide');
+					var self = $(this);
+					var tr = self.parents('tr');
+					var driver_id = <?=$driver_id?>;
+					var order_id  = tr.data('orderid');
+					$.get('ajax/driver_order.php',{order_id:order_id,driver_id:driver_id},function(ret){
+						if(ret.ret_code == 200){
+							tr.find('td').first().find('.text-success').hide().next('span').removeClass('hide');                    
+							self.hide().next('span').removeClass('hide');
+						}else{
+							alert('error!');
+						}	
+					},'json')
                 })
-
-
 		})
 	</script>
     </div>
